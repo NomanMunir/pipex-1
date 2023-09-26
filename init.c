@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abashir <abashir@student.42.fr>            +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/24 15:29:06 by abashir           #+#    #+#             */
-/*   Updated: 2023/09/26 18:05:25 by abashir          ###   ########.fr       */
+/*   Updated: 2023/09/26 15:13:44 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,14 +43,15 @@ void	ft_set_path(t_pipex *pipex)
 	char	*temp;
 	char	*temp2;
 
-	j = 0;
+	j = -1;
 	pipex->cmds = malloc(sizeof(char *) * (pipex->ac - 2));
-	while (pipex->args[j])
+	while (pipex->args[++j])
 	{
 		i = -1;
 		while (pipex->path[++i])
 		{
-			if (pipex->args[j][0][0] == '/')
+			if (pipex->args[j][0][0] == '/' && access(pipex->args[j][0], F_OK) == 0 \
+			&& access(pipex->args[j][0], X_OK) == 0)
 			{
 				pipex->cmds[j] = ft_strdup(pipex->args[j][0]);
 				break ;
@@ -61,13 +62,13 @@ void	ft_set_path(t_pipex *pipex)
 			if (access(temp2, F_OK) == 0 && access(temp2, X_OK) == 0)
 			{
 				pipex->cmds[j] = ft_strdup(temp2);
+				free(temp2);
 				break ;
 			}
 			free(temp2);
 		}
 		if (!pipex->cmds[j])
 			return (ft_putstr_fd("Error: command not found\n", 2));
-		j++;
 	}
 	pipex->cmds[j] = NULL;
 }

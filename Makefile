@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: abashir <abashir@student.42.fr>            +#+  +:+       +#+         #
+#    By: codespace <codespace@student.42.fr>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/08/10 15:18:50 by abashir           #+#    #+#              #
-#    Updated: 2023/09/26 14:46:44 by abashir          ###   ########.fr        #
+#    Updated: 2023/09/26 14:18:37 by codespace        ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -55,12 +55,11 @@ $(LIBFT):
 # 	$(CC) $(OBJ_B) $(CFLAGS) $(ARC) -o $(NAME_B)
 	
 clean:
-	rm -f -v $(OBJ) $(OBJ_B)
-	cd libft && make clean
+	cd libs/libft && make clean
 
 fclean: clean
-	rm -f $(NAME) $(NAME_B)
-	cd libft && make fclean
+	rm -f $(NAME)
+	cd libs/libft && make fclean
 
 re: fclean all
 

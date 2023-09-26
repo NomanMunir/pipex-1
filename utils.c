@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abashir <abashir@student.42.fr>            +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/24 17:22:34 by abashir           #+#    #+#             */
-/*   Updated: 2023/09/25 16:36:30 by abashir          ###   ########.fr       */
+/*   Updated: 2023/09/26 15:04:46 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,11 +24,14 @@ void ft_free(char **tab)
 
 void ft_free_pipex(t_pipex *pipex)
 {
-    // ft_free(pipex->cmd1);
-    // ft_free(pipex->cmd2);
+    int i;
+
+    i = 0;
     ft_free(pipex->path);
-    // free(pipex->r_path_cmd1);
-    // free(pipex->r_path_cmd2);
+    ft_free(pipex->cmds);
+    while(pipex->args[i])
+        ft_free(pipex->args[i++]);
+    free(pipex->args);
     free(pipex);
     exit(1);
 }

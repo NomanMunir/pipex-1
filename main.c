@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abashir <abashir@student.42.fr>            +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/21 16:00:17 by abashir           #+#    #+#             */
-/*   Updated: 2023/09/26 18:07:29 by abashir          ###   ########.fr       */
+/*   Updated: 2023/09/26 14:53:48 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,16 +45,16 @@ void	ft_open_files(t_pipex *pipex, char **argv)
 	}
 	else
 	{
-		pipex->fd_in = open(argv[1], O_RDONLY);
+		pipex->fd_in = open(argv[1], O_WRONLY | O_CREAT | O_TRUNC, 0777);
 		pipex->fd_out = open(argv[pipex->ac - 1], O_WRONLY | O_CREAT | O_TRUNC, 0777);
 	}
 	if (pipex->fd_in == -1)
-		return (perror("Create file error"), free(pipex), exit(1));
+		return (perror("Create file error1"), free(pipex), exit(1));
 
 	if (pipex->fd_out == -1)
 	{
 		close(pipex->fd_in);
-		return (perror("Create file error"), free(pipex), exit(1));
+		return (perror("Create file error2"), free(pipex), exit(1));
 	}
 }
 
@@ -135,4 +135,5 @@ int	main(int ac, char **ag, char **envp)
 	close(pipex->fd_in);
 	close(pipex->fd_out);
 	unlink(pipex->infile);
+	ft_free_pipex(pipex);
 }
