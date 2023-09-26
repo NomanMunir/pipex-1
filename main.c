@@ -6,7 +6,7 @@
 /*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/21 16:00:17 by abashir           #+#    #+#             */
-/*   Updated: 2023/09/26 14:53:48 by codespace        ###   ########.fr       */
+/*   Updated: 2023/09/26 15:29:33 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,13 +108,18 @@ void	init_here_doc(t_pipex *pipex, char **argv, char **envp)
 	free(line);
 	close(fd);
 }
+void	ft_pipeline(t_pipex *pipex, char **envp)
+{
+	int	i;
 
+	i = -1;
+	while(pipex->cmds[++i])
+		ft_exec(pipex, i, pipex->cmds[i], envp);
+}
 int	main(int ac, char **ag, char **envp)
 {
 	t_pipex	*pipex;
-	int		i;
 
-	i = 0;
 	check_args_empty(ac, ag);
 	pipex = (t_pipex *)malloc(sizeof(t_pipex));
 	if (!pipex)
@@ -127,11 +132,7 @@ int	main(int ac, char **ag, char **envp)
 	}
 	ft_open_files(pipex, ag);
 	ft_init_pipe(pipex, ag, envp);
-	while (pipex->cmds[i])
-	{
-		ft_exec(pipex, i, pipex->cmds[i], envp);
-		i++;
-	}
+	ft_pipeline(pipex, envp);
 	close(pipex->fd_in);
 	close(pipex->fd_out);
 	unlink(pipex->infile);

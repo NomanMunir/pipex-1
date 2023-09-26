@@ -1,15 +1,18 @@
-total 72
+total 84
+drwxrwxrwx+ 4 codespace root       4096 Sep 26 17:07 .
+drwxr-xrwx+ 5 codespace root       4096 Sep 26 14:13 ..
+drwxrwxrwx+ 9 codespace root       4096 Sep 26 15:22 .git
 -rw-rw-rw-  1 codespace root       1812 Sep 26 14:18 Makefile
 -rw-rw-rw-  1 codespace root       1242 Sep 26 14:12 check_args.c
 -rw-rw-rw-  1 codespace root        967 Sep 26 14:12 error.c
 -rw-rw-rw-  1 codespace root       1564 Sep 26 14:12 free.c
--rwxrwxrwx  1 codespace codespace     0 Sep 26 15:14 in
+-rwxrwxrwx  1 codespace codespace     0 Sep 26 17:07 in
 -rw-rw-rw-  1 codespace root       2990 Sep 26 15:13 init.c
 drwxrwxrwx+ 4 codespace root       4096 Sep 26 14:12 libs
--rw-rw-rw-  1 codespace root       3531 Sep 26 14:53 main.c
+-rw-rw-rw-  1 codespace root       3596 Sep 26 15:29 main.c
 -rw-rw-rw-  1 codespace root         17 Sep 26 14:12 make
--rwxrwxrwx  1 codespace root          0 Sep 26 15:14 out
--rwxrwxrwx  1 codespace codespace 23064 Sep 26 15:13 pipex
+-rwxrwxrwx  1 codespace codespace     0 Sep 26 17:07 out
+-rwxrwxrwx  1 codespace codespace 23104 Sep 26 17:04 pipex
 -rw-rw-rw-  1 codespace root       1518 Sep 26 15:01 pipex.h
 -rw-rw-rw-  1 codespace root       5856 Sep 26 14:12 test copy.c
 -rw-rw-rw-  1 codespace root       2271 Sep 26 15:04 utils.c
