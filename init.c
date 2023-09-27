@@ -6,7 +6,7 @@
 /*   By: abashir <abashir@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/24 15:29:06 by abashir           #+#    #+#             */
-/*   Updated: 2023/09/27 15:20:26 by abashir          ###   ########.fr       */
+/*   Updated: 2023/09/27 18:16:04 by abashir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ static void ft_create_args(t_pipex *pipex, char **arg)
 {
 	int	i;
 	int	j;
-	 
+
 	j = 0;
 	i = 2;
 	pipex->args = ft_calloc((pipex->ac - 2), sizeof(char **));
