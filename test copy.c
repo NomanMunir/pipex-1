@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   test.c                                             :+:      :+:    :+:   */
+/*   test copy.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: abashir <abashir@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/21 16:00:17 by abashir           #+#    #+#             */
-/*   Updated: 2023/09/26 13:54:58 by abashir          ###   ########.fr       */
+/*   Updated: 2023/09/27 15:16:26 by abashir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,9 +88,9 @@ int	main(int ac, char **ag, char **envp)
 
 	i = 0;
 	check_args_empty(ac, ag);
-	pipex = (t_pipex *)malloc(sizeof(t_pipex));
+	pipex = (t_pipex *)ft_calloc(sizeof(t_pipex));
 	if (!pipex)
-		return (perror("malloc: "), 1);
+		return (perror("ft_calloc: "), 1);
 	pipex->ac = ac;
 	ft_open_files(pipex, ag);
 	ft_init_pipe(pipex, ag, envp, ac);

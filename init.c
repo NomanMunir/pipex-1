@@ -6,7 +6,7 @@
 /*   By: abashir <abashir@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/24 15:29:06 by abashir           #+#    #+#             */
-/*   Updated: 2023/09/26 18:05:25 by abashir          ###   ########.fr       */
+/*   Updated: 2023/09/27 18:16:04 by abashir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,14 +23,10 @@ void	ft_find_path(t_pipex *pipex, char **envp)
 		if (ft_strncmp(envp[i], "PATH=", 5) == 0)
 		{
 			tmp = ft_substr(envp[i], 5, ft_strlen(envp[i]) - 5);
-			// if (!tmp)
-			// 	return (ft_free(pipex->cmd1), \
-			// 	ft_free(pipex->cmd2), free(pipex), exit(1));
+			check_error(!tmp, "malloc", 1, pipex);
 			pipex->path = ft_split(tmp, ':');
 			free(tmp);
-			// if (!pipex->path)
-			// 	return (ft_free(pipex->cmd1), \
-			// 	ft_free(pipex->cmd2), free(pipex), exit(1));
+			check_error(!pipex->path, "malloc", 1, pipex);
 			return ;
 		}
 	}
@@ -41,53 +37,52 @@ void	ft_set_path(t_pipex *pipex)
 	int		i;
 	int		j;
 	char	*temp;
-	char	*temp2;
 
-	j = 0;
-	pipex->cmds = malloc(sizeof(char *) * (pipex->ac - 2));
-	while (pipex->args[j])
+	j = -1;
+	pipex->cmds = ft_calloc((pipex->ac - 2), sizeof(char *));
+	check_error(!pipex->cmds, "malloc", 1, pipex);
+	
+	while (pipex->args[++j])
 	{
 		i = -1;
 		while (pipex->path[++i])
 		{
-			if (pipex->args[j][0][0] == '/')
+			if (pipex->args[j][0][0] == '/' && access(pipex->args[j][0], F_OK) == 0 \
+			&& access(pipex->args[j][0], X_OK) == 0)
 			{
 				pipex->cmds[j] = ft_strdup(pipex->args[j][0]);
+				check_error(!pipex->cmds[j], "malloc", 1, pipex);
 				break ;
 			}
-			temp = ft_strjoin(pipex->path[i], "/");
-			temp2 = ft_strjoin(temp, pipex->args[j][0]);
-			free(temp);
-			if (access(temp2, F_OK) == 0 && access(temp2, X_OK) == 0)
+			temp = ft_strjoin(pipex->path[i], "/", pipex->args[j][0]);
+			check_error(!temp, "malloc", 1, pipex);
+			if (access(temp, F_OK) == 0 && access(temp, X_OK) == 0)
 			{
-				pipex->cmds[j] = ft_strdup(temp2);
+				pipex->cmds[j] = ft_strdup(temp);
+				free(temp);
+				check_error(!pipex->cmds[j], "malloc", 1, pipex);
 				break ;
 			}
-			free(temp2);
+			free(temp);
 		}
-		if (!pipex->cmds[j])
-			return (ft_putstr_fd("Error: command not found\n", 2));
-		j++;
+		check_error(!pipex->cmds[j], "Command not found!", 1, pipex);
 	}
 	pipex->cmds[j] = NULL;
 }
-
 
 static void ft_create_args(t_pipex *pipex, char **arg)
 {
 	int	i;
 	int	j;
-	 
+
 	j = 0;
 	i = 2;
-	pipex->args = malloc(sizeof(char **) * (pipex->ac - 2));
-	if (!pipex->args)
-		return (free(pipex), exit(1));
+	pipex->args = ft_calloc((pipex->ac - 2), sizeof(char **));
+	check_error(!pipex->args, "malloc", 1, pipex);
 	while (arg[i + 1])
 	{
 		pipex->args[j] = ft_split(arg[i], ' ');
-		if (!pipex->args[j])
-			return (free(pipex), exit(1));
+		check_error(!pipex->args[j], "malloc", 1, pipex);
 		i++;
 		j++;
 	}
@@ -96,15 +91,12 @@ static void ft_create_args(t_pipex *pipex, char **arg)
 
 void	ft_init_pipe(t_pipex *pipex, char **argv, char **envp)
 {
-	if (ft_strncmp(argv[1], "here_doc", 8) == 0)
+	if (ft_strncmp(pipex->trim_argv, "here_doc", 8) == 0)
 		argv++;
 	pipex->envp = envp;
 	pipex->infile = argv[1];
 	pipex->outfile = argv[pipex->ac - 1];
 	ft_create_args(pipex, argv);
-	// print_3d_array(pipex);
 	ft_find_path(pipex, envp);
 	ft_set_path(pipex);
-	// print_2d_array(pipex->cmds);
-	// return (ft_putstr_fd("Error: arguments are not valid\n", 2), exit(1));
 }

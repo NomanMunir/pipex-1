@@ -6,7 +6,7 @@
 /*   By: abashir <abashir@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/08 13:47:38 by abashir           #+#    #+#             */
-/*   Updated: 2023/09/19 13:45:15 by abashir          ###   ########.fr       */
+/*   Updated: 2023/09/27 15:22:28 by abashir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ char	**ft_split(char const *s, char c)
 		return (NULL);
 	index = 0;
 	wrd_cnt = count_wrd(s, c);
-	words = (char **)malloc(sizeof(char *) * (wrd_cnt + 1));
+	words = (char **)ft_calloc(sizeof(char *), (wrd_cnt + 1));
 	if (words == NULL)
 		return (NULL);
 	while (*s)

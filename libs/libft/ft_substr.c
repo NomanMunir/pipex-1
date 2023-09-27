@@ -6,7 +6,7 @@
 /*   By: abashir <abashir@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/08 13:49:31 by abashir           #+#    #+#             */
-/*   Updated: 2023/07/16 18:05:54 by abashir          ###   ########.fr       */
+/*   Updated: 2023/09/27 15:23:47 by abashir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 		return (ft_strdup(""));
 	if (len > (ft_strlen(s) - start))
 		len = ft_strlen(s) - start;
-	new = (char *)(malloc(sizeof(char) * (len + 1)));
+	new = (char *)(ft_calloc(sizeof(char), (len + 1)));
 	if (new == NULL)
 		return (NULL);
 	while (s[i] != '\0' && i < len)
