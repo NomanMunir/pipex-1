@@ -6,7 +6,7 @@
 /*   By: abashir <abashir@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/08 13:46:07 by abashir           #+#    #+#             */
-/*   Updated: 2023/07/18 18:51:06 by abashir          ###   ########.fr       */
+/*   Updated: 2023/09/27 15:22:31 by abashir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ char	*ft_itoa(int n)
 
 	nbr = n;
 	i = ft_nbr_len(nbr);
-	new = (char *)malloc(sizeof(char) * (i + 1));
+	new = (char *)ft_calloc(sizeof(char), (i + 1));
 	if (new == NULL)
 		return (NULL);
 	new[i] = '\0';

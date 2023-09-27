@@ -6,7 +6,7 @@
 /*   By: abashir <abashir@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/08 13:49:25 by abashir           #+#    #+#             */
-/*   Updated: 2023/07/13 18:51:14 by abashir          ###   ########.fr       */
+/*   Updated: 2023/09/27 15:23:39 by abashir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,9 +58,9 @@ char	*ft_strtrim(char const *s1, char const *set)
 	while (s1[len_s - 1 - e] && ft_find(s1[len_s - 1 - e], set))
 		e++;
 	if (e == len_s || s == len_s)
-		new = (char *)malloc(sizeof(char) * 1);
+		new = (char *)ft_calloc(sizeof(char), 1);
 	else
-		new = (char *)malloc(sizeof(char) *(len_s - s - e + 1));
+		new = (char *)ft_calloc(sizeof(char), (len_s - s - e + 1));
 	if (new)
 	{
 		ft_strcpy(new, s1, s, e);

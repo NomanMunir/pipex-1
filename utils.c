@@ -3,37 +3,24 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: abashir <abashir@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/24 17:22:34 by abashir           #+#    #+#             */
-/*   Updated: 2023/09/26 15:04:46 by codespace        ###   ########.fr       */
+/*   Updated: 2023/09/27 14:13:18 by abashir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-void ft_free(char **tab)
+int ft_strcmp(const char *s1, const char *s2)
 {
-    int i;
+    int i = 0;
 
-    i = -1;
-    while (tab[++i])
-        free(tab[i]);
-    free(tab);
-}
-
-void ft_free_pipex(t_pipex *pipex)
-{
-    int i;
-
-    i = 0;
-    ft_free(pipex->path);
-    ft_free(pipex->cmds);
-    while(pipex->args[i])
-        ft_free(pipex->args[i++]);
-    free(pipex->args);
-    free(pipex);
-    exit(1);
+    while (s1[i] != '\0' && s2[i] != '\0' && s1[i] == s2[i])
+        i++;
+    if ((s1[i] == '\0' && (s2[i] == '\n')))
+        return 0;
+    return (s1[i] - s2[i]);
 }
 
 // void	print_struct(t_pipex *pipex)

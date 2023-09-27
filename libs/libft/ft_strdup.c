@@ -6,7 +6,7 @@
 /*   By: abashir <abashir@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/08 13:47:55 by abashir           #+#    #+#             */
-/*   Updated: 2023/07/09 13:44:25 by abashir          ###   ########.fr       */
+/*   Updated: 2023/09/27 15:22:42 by abashir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ char	*ft_strdup(const char *s1)
 	int			i;
 
 	i = 0;
-	new = (char *)(malloc(sizeof(char) * (ft_strlen(s1) + 1)));
+	new = (char *)(ft_calloc(sizeof(char), (ft_strlen(s1) + 1)));
 	if (new == NULL)
 		return ((char *) NULL);
 	while (s1[i] != '\0')

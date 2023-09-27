@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: abashir <abashir@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/15 17:11:36 by alaa              #+#    #+#             */
-/*   Updated: 2023/09/26 15:01:40 by codespace        ###   ########.fr       */
+/*   Updated: 2023/09/27 16:08:58 by abashir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,10 @@
 # include <stdio.h>
 # include "libs/libft/libft.h" 
 # include "libs/get_next_line/get_next_line.h"
-
+# include <errno.h>
 typedef struct s_pipex
 {
+	char	*trim_argv;
 	int		fd_in;
 	int		ac;
 	int		fd_out;
@@ -32,14 +33,19 @@ typedef struct s_pipex
 	char	**envp;
 	char	*infile;
 	char	*outfile;
+	char	*line;
 	int		fd[2];
+	int		fdd;
 }	t_pipex;
 
 void	ft_init_pipe(t_pipex *pipex, char **argv, char **envp);
 void	ft_free_pipex(t_pipex *pipex);
 void	ft_free(char **tab);
-void	error_exit(char *str);
+void	error_exit(char *str, int flag, t_pipex *pipex);
+void	check_error(int condition, char *str, int flag, t_pipex *pipex);
 void	print_3d_array(t_pipex *pipex);
 void    print_2d_array(char **tab);
+int		ft_strcmp(const char *s1, const char *s2);
+void    ft_free_3d(t_pipex *pipex);
 
 #endif

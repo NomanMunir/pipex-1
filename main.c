@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: abashir <abashir@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/21 16:00:17 by abashir           #+#    #+#             */
-/*   Updated: 2023/09/26 15:29:33 by codespace        ###   ########.fr       */
+/*   Updated: 2023/09/27 17:09:20 by abashir          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,19 +18,16 @@ void	check_args_empty(int argc, char **argv)
 	int	j;
 
 	i = 1;
-	if (argc < 4)
-		error_exit("Error: wrong number of arguments\n");
+	check_error(argc < 4, "Error: Wrong number of arguments\n", 0, NULL);
 	while (i < argc)
 	{
 		j = 0;
-		if (argv[i][j] == '\0')
-			error_exit("Error: empty argument\n");
+		check_error(argv[i][0] == '\0', "Error: Empty argument\n", 0, NULL);
 		if (argv[i][j] == ' ')
 		{
 			while (argv[i][j] == ' ')
 				j++;
-			if (argv[i][j] == '\0')
-				error_exit("Error: empty argument\n");
+			check_error(argv[i][j] == '\0', "Error: Empty argument\n", 0, NULL);
 		}
 		i++;
 	}
@@ -38,31 +35,24 @@ void	check_args_empty(int argc, char **argv)
 
 void	ft_open_files(t_pipex *pipex, char **argv)
 {
-	if (ft_strncmp(argv[1], "here_doc", 8) == 0)
+	if (ft_strncmp(pipex->trim_argv, "here_doc", 8) == 0)
 	{
-		pipex->fd_in = open("in", O_RDONLY);
+		pipex->fd_in = open("here_doc", O_RDONLY);
 		pipex->fd_out = open(argv[pipex->ac], O_WRONLY | O_CREAT | O_TRUNC, 0777);
 	}
 	else
 	{
-		pipex->fd_in = open(argv[1], O_WRONLY | O_CREAT | O_TRUNC, 0777);
+		pipex->fd_in = open(argv[1], O_RDONLY);
 		pipex->fd_out = open(argv[pipex->ac - 1], O_WRONLY | O_CREAT | O_TRUNC, 0777);
 	}
-	if (pipex->fd_in == -1)
-		return (perror("Create file error1"), free(pipex), exit(1));
-
-	if (pipex->fd_out == -1)
-	{
-		close(pipex->fd_in);
-		return (perror("Create file error2"), free(pipex), exit(1));
-	}
+	check_error(pipex->fd_in == -1, "Open file error", 0, pipex);
+	check_error(pipex->fd_out == -1, "Create file error", 1, pipex);
 }
 
 void	ft_exec(t_pipex *pipex, int i, char *cmd, char **envp)
 {
 	int		fd[2];
 	int		pid;
-	int		fdd;
 
 	if (pipe(fd) == -1)
 		return (perror("pipe"), ft_free_pipex(pipex));
@@ -73,7 +63,7 @@ void	ft_exec(t_pipex *pipex, int i, char *cmd, char **envp)
 	{
 		if (i == 0)
 			dup2(pipex->fd_in, STDIN_FILENO);
-		dup2(fdd, STDIN_FILENO);
+		dup2(pipex->fdd, STDIN_FILENO);
 		if (pipex->cmds[i + 1] != NULL)
 			dup2(fd[1], STDOUT_FILENO);
 		else if (pipex->cmds[i + 1] == NULL)
@@ -86,55 +76,64 @@ void	ft_exec(t_pipex *pipex, int i, char *cmd, char **envp)
 	{
 		wait(NULL);
 		close(fd[1]);
-		fdd = fd[0];
+		pipex->fdd = fd[0];
 	}
 }
 
-void	init_here_doc(t_pipex *pipex, char **argv, char **envp)
+void	read_here_doc(t_pipex *pipex, char **argv, int fd)
+{
+	ft_putstr_fd("pipe heredoc> ", 1);
+	pipex->line = get_next_line(0);
+	check_error(pipex->line == NULL, "Empty here_doc", 1, pipex);
+	while (ft_strcmp(argv[2], pipex->line) && pipex->line)
+	{
+		ft_putstr_fd(pipex->line, fd);
+		free(pipex->line);
+		ft_putstr_fd("pipe heredoc> ", 1);
+		pipex->line = get_next_line(0);
+		check_error(pipex->line == NULL, "here_doc exit", 1, pipex);
+	}
+	free(pipex->line);
+}
+
+void	init_here_doc(t_pipex *pipex, char **argv, int ac, char **envp)
 {
 	int		fd;
-	char	*line;
 
-	fd = open("in", O_WRONLY | O_CREAT | O_TRUNC, 0777);
-	ft_putstr_fd("pipe heredoc> ", 1);
-	line = get_next_line(0);
-	while (ft_strncmp(argv[2], line, ft_strlen(argv[2]) != 0) && line)
+	pipex->trim_argv = ft_strtrim(argv[1], " ");
+	if (ft_strncmp(pipex->trim_argv, "here_doc", 8) == 0)
 	{
-		ft_putstr_fd(line, fd);
-		free(line);
-		ft_putstr_fd("pipe heredoc> ", 1);
-		line = get_next_line(0);
+		pipex->fd_in = open("here_doc", O_WRONLY | O_CREAT | O_TRUNC, 0777);
+		check_error(pipex->fd_in == -1, "Create file error", 0, pipex);
+		read_here_doc(pipex, argv, pipex->fd_in);
+		close(pipex->fd_in);
+		pipex->ac = ac - 1;
 	}
-	free(line);
-	close(fd);
+	else
+		pipex->ac = ac;
 }
+
 void	ft_pipeline(t_pipex *pipex, char **envp)
 {
 	int	i;
 
 	i = -1;
-	while(pipex->cmds[++i])
+	while (pipex->cmds[++i])
 		ft_exec(pipex, i, pipex->cmds[i], envp);
 }
+
 int	main(int ac, char **ag, char **envp)
 {
 	t_pipex	*pipex;
 
 	check_args_empty(ac, ag);
-	pipex = (t_pipex *)malloc(sizeof(t_pipex));
-	if (!pipex)
-		return (perror("malloc"), 1);
-	pipex->ac = ac;
-	if (ft_strncmp(ag[1], "here_doc", 8) == 0)
-	{
-		init_here_doc(pipex, ag, envp);
-		pipex->ac = ac - 1;
-	}
+	pipex = (t_pipex *)ft_calloc(1, sizeof(t_pipex));
+	check_error(!pipex, "malloc", 0, NULL);
+	init_here_doc(pipex, ag, ac, envp);
 	ft_open_files(pipex, ag);
 	ft_init_pipe(pipex, ag, envp);
 	ft_pipeline(pipex, envp);
-	close(pipex->fd_in);
-	close(pipex->fd_out);
-	unlink(pipex->infile);
 	ft_free_pipex(pipex);
 }
+
+
