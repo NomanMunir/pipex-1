@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: nmunir <nmunir@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/21 16:00:17 by abashir           #+#    #+#             */
-/*   Updated: 2023/09/28 09:59:03 by codespace        ###   ########.fr       */
+/*   Updated: 2023/09/28 18:36:29 by nmunir           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,8 +42,8 @@ void	ft_open_files(t_pipex *pipex, char **argv)
 	}
 	else if (ft_strncmp(argv[1], "/dev/stdin", ft_strlen(argv[1])) == 0)
 	{
-    	pipex->fd_in = dup2(0, STDIN_FILENO);
-		pipex->fd_out = open(argv[pipex->ac - 1], O_WRONLY | O_CREAT | O_TRUNC, 0777);
+		pipex->fd_in = open("stdinf", O_RDONLY);
+		pipex->fd_out = open(argv[pipex->ac - 1], O_WRONLY | O_CREAT | O_TRUNC, 0777);		
 	}
 	else
 	{
@@ -61,10 +61,10 @@ void	ft_exec(t_pipex *pipex, int i, char *cmd, char **envp)
 
 	if (pipe(fd) == -1)
 		return (perror("pipe"), ft_free_pipex(pipex));
-	pid = fork();
-	if (pid == -1)
+	pipex->pid[i] = fork();
+	if (pipex->pid[i] == -1)
 		return (perror("fork:"), ft_free_pipex(pipex));
-	if (pid == 0)
+	if (pipex->pid[i] == 0)
 	{
 		if (i == 0)
 			dup2(pipex->fd_in, STDIN_FILENO);
@@ -72,7 +72,10 @@ void	ft_exec(t_pipex *pipex, int i, char *cmd, char **envp)
 		if (pipex->cmds[i + 1] != NULL)
 			dup2(fd[1], STDOUT_FILENO);
 		else if (pipex->cmds[i + 1] == NULL)
+		{
 			dup2(pipex->fd_out, STDOUT_FILENO);
+			close(pipex->fd_out);
+		}
 		close(fd[0]);
 		if (execve(cmd, pipex->args[i], envp) == -1)
 		{
@@ -89,18 +92,33 @@ void	ft_exec(t_pipex *pipex, int i, char *cmd, char **envp)
 
 void	read_here_doc(t_pipex *pipex, char **argv, int fd)
 {
-	ft_putstr_fd("pipe heredoc> ", 1);
-	pipex->line = get_next_line(0);
-	check_error(pipex->line == NULL, "Empty here_doc", 1, pipex);
-	while (ft_strcmp(argv[2], pipex->line) && pipex->line)
+	if (ft_strncmp(argv[1], "/dev/stdin", ft_strlen(argv[1])) == 0)
 	{
-		ft_putstr_fd(pipex->line, fd);
-		free(pipex->line);
+		pipex->line = get_next_line(0);
+		check_error(pipex->line == NULL, "Empty here_doc", 1, pipex);
+		while (pipex->line)
+		{
+			ft_putstr_fd(pipex->line, fd);
+			free(pipex->line);
+			pipex->line = get_next_line(0);
+		}
+		free(pipex->line);		
+	}
+	else if (ft_strncmp(pipex->trim_argv, "here_doc", 8) == 0)
+	{
 		ft_putstr_fd("pipe heredoc> ", 1);
 		pipex->line = get_next_line(0);
-		check_error(pipex->line == NULL, "here_doc exit", 1, pipex);
+		check_error(pipex->line == NULL, "Empty here_doc", 1, pipex);
+		while (ft_strcmp(argv[2], pipex->line) && pipex->line)
+		{
+			ft_putstr_fd(pipex->line, fd);
+			free(pipex->line);
+			ft_putstr_fd("pipe heredoc> ", 1);
+			pipex->line = get_next_line(0);
+			check_error(pipex->line == NULL, "here_doc exit", 1, pipex);
+		}
+		free(pipex->line);
 	}
-	free(pipex->line);
 }
 
 void	init_here_doc(t_pipex *pipex, char **argv, int ac, char **envp)
@@ -116,6 +134,14 @@ void	init_here_doc(t_pipex *pipex, char **argv, int ac, char **envp)
 		close(pipex->fd_in);
 		pipex->ac = ac - 1;
 	}
+	else if (ft_strncmp(argv[1], "/dev/stdin", ft_strlen(argv[1])) == 0)
+	{
+		pipex->fd_in = open("stdinf", O_WRONLY | O_CREAT | O_TRUNC, 0777);
+		check_error(pipex->fd_in == -1, "Create file error", 0, pipex);
+		read_here_doc(pipex, argv, pipex->fd_in);
+		close(pipex->fd_in);
+		pipex->ac = ac;
+	}
 	else
 		pipex->ac = ac;
 }
@@ -127,6 +153,9 @@ void	ft_pipeline(t_pipex *pipex, char **envp)
 	i = -1;
 	while (pipex->cmds[++i])
 		ft_exec(pipex, i, pipex->cmds[i], envp);
+	while (i--)
+		waitpid(pipex->pid[i], NULL, 0);
+	
 }
 
 int	main(int ac, char **ag, char **envp)
@@ -139,6 +168,7 @@ int	main(int ac, char **ag, char **envp)
 	init_here_doc(pipex, ag, ac, envp);
 	ft_open_files(pipex, ag);
 	ft_init_pipe(pipex, ag, envp);
+	pipex->pid = (int *)ft_calloc((pipex->ac - 3), sizeof(int));
 	ft_pipeline(pipex, envp);
 	ft_free_pipex(pipex);
 }

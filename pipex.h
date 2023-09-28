@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abashir <abashir@student.42.fr>            +#+  +:+       +#+        */
+/*   By: nmunir <nmunir@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/15 17:11:36 by alaa              #+#    #+#             */
-/*   Updated: 2023/09/27 16:08:58 by abashir          ###   ########.fr       */
+/*   Updated: 2023/09/28 18:29:17 by nmunir           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@
 typedef struct s_pipex
 {
 	char	*trim_argv;
+	int		*pid;
+	int		**fd;
 	int		fd_in;
 	int		ac;
 	int		fd_out;
@@ -34,7 +36,7 @@ typedef struct s_pipex
 	char	*infile;
 	char	*outfile;
 	char	*line;
-	int		fd[2];
+	// int		fd[2];
 	int		fdd;
 }	t_pipex;
 
