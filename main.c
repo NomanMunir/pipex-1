@@ -6,7 +6,7 @@
 /*   By: nmunir <nmunir@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/21 16:00:17 by abashir           #+#    #+#             */
-/*   Updated: 2023/09/28 18:36:29 by nmunir           ###   ########.fr       */
+/*   Updated: 2023/09/28 20:17:14 by nmunir           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,9 +74,12 @@ void	ft_exec(t_pipex *pipex, int i, char *cmd, char **envp)
 		else if (pipex->cmds[i + 1] == NULL)
 		{
 			dup2(pipex->fd_out, STDOUT_FILENO);
-			close(pipex->fd_out);
+			// close(pipex->fd_out);
 		}
+		close(pipex->fd_out);
+		close(pipex->fd_in);
 		close(fd[0]);
+		close(fd[1]);
 		if (execve(cmd, pipex->args[i], envp) == -1)
 		{
 			perror("command not found");
@@ -87,6 +90,7 @@ void	ft_exec(t_pipex *pipex, int i, char *cmd, char **envp)
 	{
 		close(fd[1]);
 		pipex->fdd = fd[0];
+		// close(fd[0]);
 	}
 }
 
@@ -153,8 +157,10 @@ void	ft_pipeline(t_pipex *pipex, char **envp)
 	i = -1;
 	while (pipex->cmds[++i])
 		ft_exec(pipex, i, pipex->cmds[i], envp);
-	while (i--)
-		waitpid(pipex->pid[i], NULL, 0);
+	// while (i--)
+	wait(NULL);
+		// waitpid(pipex->pid[i], NULL, 0);
+		// waitpid(-1, NULL, 0);
 	
 }
 
