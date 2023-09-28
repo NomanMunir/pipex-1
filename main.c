@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abashir <abashir@student.42.fr>            +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/21 16:00:17 by abashir           #+#    #+#             */
-/*   Updated: 2023/09/27 17:09:20 by abashir          ###   ########.fr       */
+/*   Updated: 2023/09/28 09:59:03 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,11 @@ void	ft_open_files(t_pipex *pipex, char **argv)
 		pipex->fd_in = open("here_doc", O_RDONLY);
 		pipex->fd_out = open(argv[pipex->ac], O_WRONLY | O_CREAT | O_TRUNC, 0777);
 	}
+	else if (ft_strncmp(argv[1], "/dev/stdin", ft_strlen(argv[1])) == 0)
+	{
+    	pipex->fd_in = dup2(0, STDIN_FILENO);
+		pipex->fd_out = open(argv[pipex->ac - 1], O_WRONLY | O_CREAT | O_TRUNC, 0777);
+	}
 	else
 	{
 		pipex->fd_in = open(argv[1], O_RDONLY);
@@ -70,11 +75,13 @@ void	ft_exec(t_pipex *pipex, int i, char *cmd, char **envp)
 			dup2(pipex->fd_out, STDOUT_FILENO);
 		close(fd[0]);
 		if (execve(cmd, pipex->args[i], envp) == -1)
-			return (perror("Command not found: "), ft_free_pipex(pipex));
+		{
+			perror("command not found");
+			exit(EXIT_FAILURE);
+		}
 	}
 	else
 	{
-		wait(NULL);
 		close(fd[1]);
 		pipex->fdd = fd[0];
 	}

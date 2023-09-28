@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abashir <abashir@student.42.fr>            +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/24 15:29:06 by abashir           #+#    #+#             */
-/*   Updated: 2023/09/27 18:16:04 by abashir          ###   ########.fr       */
+/*   Updated: 2023/09/28 09:25:17 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ void	ft_find_path(t_pipex *pipex, char **envp)
 			return ;
 		}
 	}
+	check_error(!pipex->path, "path not found", 1, pipex);
 }
 
 void	ft_set_path(t_pipex *pipex)
@@ -65,7 +66,9 @@ void	ft_set_path(t_pipex *pipex)
 			}
 			free(temp);
 		}
-		check_error(!pipex->cmds[j], "Command not found!", 1, pipex);
+		if (!pipex->cmds[j])
+			pipex->cmds[j] = ft_strdup(pipex->args[j][0]); 
+		// check_error(!pipex->cmds[j], "Command not found!", 1, pipex);
 	}
 	pipex->cmds[j] = NULL;
 }

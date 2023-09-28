@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   error.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abashir <abashir@student.42.fr>            +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 11:28:55 by abashir           #+#    #+#             */
-/*   Updated: 2023/09/27 17:39:26 by abashir          ###   ########.fr       */
+/*   Updated: 2023/09/28 10:03:04 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,29 +14,26 @@
 
 void	error_exit(char *str, int flag, t_pipex *pipex)
 {
-	if (pipex)
+	if (pipex->trim_argv)
+		free(pipex->trim_argv);
+	if (pipex->args)
+		ft_free_3d(pipex);
+	if (pipex->path)
+		ft_free(pipex->path);
+	if (pipex->cmds)
+		ft_free(pipex->cmds);
+	if (flag == 1)
 	{
-		if (pipex->trim_argv)
-			free(pipex->trim_argv);
-		if (pipex->args)
-			ft_free_3d(pipex);
-		if (pipex->path)
-			ft_free(pipex->path);
-		if (pipex->cmds)
-			ft_free(pipex->cmds);
-		if (flag == 1)
-		{
-			close(pipex->fd_in);
-			close(pipex->fd_out);
-			if (pipex->outfile)
-				unlink(pipex->outfile);
-			unlink("here_doc");
-		}
-		if (pipex)
-			free(pipex);
+		close(pipex->fd_in);
+		close(pipex->fd_out);
+		if (pipex->outfile)
+			unlink(pipex->outfile);
+		unlink("here_doc");
 	}
+	if (pipex)
+		free(pipex);
 	perror(str);
-	exit(1);
+	exit(EXIT_FAILURE);
 }
 
 void	check_error(int condition, char *str, int flag, t_pipex *pipex)
@@ -85,5 +82,5 @@ void ft_free_pipex(t_pipex *pipex)
 	close(pipex->fd_out);
 	unlink("here_doc");
     free(pipex);
-    exit(1);
+    exit(EXIT_SUCCESS);
 }
